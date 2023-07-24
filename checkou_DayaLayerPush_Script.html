@@ -1,0 +1,35 @@
+<script>
+    var Pelem = document.querySelector("#order_review > table > tbody").children;
+    var multiarray = [];
+    for (var i = 0; i < Pelem.length; i++) {
+        var items = {};
+        var Celem = Pelem[i];
+        var Gcelem = Celem.children;
+        for (var j = 0; j < Gcelem.length; j++) {
+            var elem = Gcelem[j];
+
+            if (elem.classList.contains('product-name')) {
+                var product_name = elem.innerText;
+                var quantity = elem.lastElementChild.innerText;
+                var repl = '\n' + quantity;
+                var modifiproductname = product_name.replace(repl, '')
+
+                items.item_name = modifiproductname.trim();
+                items.quantity = parseFloat(elem.lastElementChild.innerHTML.replace('&nbsp', ''));
+            }
+            if (elem.classList.contains('product-total')) {
+                items.price = parseFloat(elem.innerText.replace('$', ''));
+            }
+        }
+        multiarray.push(items);
+    }
+    dataLayer.push({
+        event: "begin_checkout",
+        ecommerce: {
+            currency: "USD",
+            value: parseFloat(document.querySelector("table > tfoot > tr.order-total > td > strong > span > bdi").innerText.replace('$', '')),
+            items: multiarray
+        }
+    });
+
+</script>
